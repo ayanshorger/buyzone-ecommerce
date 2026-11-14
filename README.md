@@ -1,3 +1,7 @@
+<img width="948" height="375" alt="Screenshot 2026-11-14 094231" src="https://github.com/user-attachments/assets/98e12884-9e2e-4732-a4ad-76a41496649b" />
+<img width="951" height="377" alt="Screenshot 2026-11-14 094217" src="https://github.com/user-attachments/assets/e59440d1-8132-4d6d-ab38-ef25553a4758" />
+<img width="948" height="401" alt="Screenshot 2026-11-14 094135" src="https://github.com/user-attachments/assets/0f10577e-3350-4628-8c12-ed0ae10a9e34" />
+<img width="949" height="359" alt="Screenshot 2026-11-14 094118" src="https://github.com/user-attachments/assets/94ec0cb2-2eff-4413-b8be-54c42753e14f" />
 # Buyzone - E-Commerce Web Application 
 
 A complete, production-grade, end-to-end e-commerce web application built using **Python, Django, SQLite, HTML5, CSS3, and JavaScript**. 
