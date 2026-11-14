@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}My Wishlist - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 mt-3">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-heart text-danger me-2"></i>My Wishlist ({{ wishlist_items.count }})</h4>
+        <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary btn-sm fw-bold">Continue Shopping</a>
+    </div>
+
+    {% if wishlist_items %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for item in wishlist_items %}
+                <div class="col">
+                    <div class="bz-product-card shadow-sm">
+                        <a href="{% url 'store:product_detail' item.product.slug %}" class="bz-card-img-wrapper">
+                            <img src="{{ item.product.get_image }}" alt="{{ item.product.title }}">
+                        </a>
+                        <div class="bz-card-body">
+                            <div class="bz-product-brand">{{ item.product.brand }}</div>
+                            <a href="{% url 'store:product_detail' item.product.slug %}" class="bz-product-title">
+                                {{ item.product.title }}
+                            </a>
+                            <div class="bz-price-wrap">
+                                <span class="bz-selling-price">₹{{ item.product.selling_price|intcomma }}</span>
+                                <span class="bz-mrp-price">₹{{ item.product.mrp_price|intcomma }}</span>
+                                <span class="bz-discount-badge">{{ item.product.discount_percentage }}% off</span>
+                            </div>
+
+                            <div class="mt-auto pt-2 d-flex flex-column gap-2">
+                                <a href="{% url 'cart:move_to_cart' item.product.id %}" class="btn btn-warning btn-sm w-100 fw-bold">
+                                    <i class="fa-solid fa-cart-shopping me-1"></i> Move to Cart
+                                </a>
+                                <a href="{% url 'cart:toggle_wishlist' item.product.id %}" class="btn btn-outline-danger btn-sm w-100">
+                                    <i class="fa-regular fa-trash-can me-1"></i> Remove
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm p-5 text-center my-4">
+            <div class="mb-3">
+                <i class="fa-regular fa-heart fs-1 text-muted"></i>
+            </div>
+            <h4 class="fw-bold text-dark">Your Wishlist is Empty</h4>
+            <p class="text-muted small">Explore more and shortlist items you love to save for later.</p>
+            <div class="mt-2">
+                <a href="{% url 'store:product_list' %}" class="btn btn-primary fw-bold px-4">Discover Products</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

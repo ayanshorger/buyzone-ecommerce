@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-0 shadow-sm p-4">
+                <div class="text-center mb-4">
+                    <a href="{% url 'core:home' %}" class="bz-logo d-inline-block">
+                        <div class="brand-text text-dark">Buy<span class="text-warning">zone</span></div>
+                    </a>
+                    <h5 class="fw-bold mt-2 text-dark">Create your Buyzone Account</h5>
+                    <p class="text-muted small">Join millions of shoppers for fast deliveries &amp; exclusive deals.</p>
+                </div>
+
+                <form method="POST" action="{% url 'accounts:register' %}">
+                    {% csrf_token %}
+                    
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">First Name *</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Last Name *</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Username *</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Email Address *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Mobile Number (Optional)</label>
+                        {{ form.phone }}
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Password *</label>
+                            {{ form.password }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Confirm Password *</label>
+                            {{ form.confirm_password }}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold shadow-sm mb-3">
+                        Create Buyzone Account
+                    </button>
+
+                    <div class="text-center small">
+                        Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary fw-bold text-decoration-none">Sign in here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

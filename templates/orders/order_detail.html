@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Order Details #{{ order.order_number }} - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container px-lg-4 mt-3">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'orders:order_history' %}">Your Orders</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Order #{{ order.order_number }}</li>
+        </ol>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+        <div>
+            <h4 class="fw-bold mb-1 text-dark">Order #{{ order.order_number }}</h4>
+            <div class="text-muted small">Placed on {{ order.created_at|date:"d M Y, h:i A" }}</div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'orders:order_invoice' order.order_number %}" target="_blank" class="btn btn-outline-secondary btn-sm fw-bold">
+                <i class="fa-solid fa-file-invoice me-1"></i> Print Invoice
+            </a>
+            {% if order.can_cancel %}
+                <button type="button" class="btn btn-outline-danger btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                    Cancel Order
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- TRACKING TIMELINE / STEPPER -->
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h5 class="fw-bold text-dark mb-0">Delivery Status</h5>
+            <span class="badge {{ order.badge_class }} fs-6">{{ order.get_order_status_display }}</span>
+        </div>
+
+        {% if order.order_status == 'CANCELLED' %}
+            <div class="alert alert-danger my-3">
+                <i class="fa-solid fa-circle-xmark me-2"></i> This order was cancelled. Any amount paid will be refunded to your original payment method within 3-5 business days.
+            </div>
+        {% else %}
+            <!-- Visual Stepper Bar -->
+            <div class="bz-tracking-stepper my-4">
+                <!-- Stepper Line -->
+                <div class="bz-stepper-progress" style="width: {% if order.status_step == 1 %}0%{% elif order.status_step == 2 %}25%{% elif order.status_step == 3 %}50%{% elif order.status_step == 4 %}75%{% elif order.status_step == 5 %}90%{% else %}0%{% endif %};"></div>
+
+                <!-- Step 1: Ordered -->
+                <div class="bz-step-item {% if order.status_step >= 1 %}completed{% endif %}">
+                    <div class="bz-step-circle">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <div class="bz-step-label">Ordered</div>
+                </div>
+
+                <!-- Step 2: Confirmed -->
+                <div class="bz-step-item {% if order.status_step >= 2 %}completed{% endif %}">
+                    <div class="bz-step-circle">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <div class="bz-step-label">Confirmed</div>
+                </div>
+
+                <!-- Step 3: Shipped -->
+                <div class="bz-step-item {% if order.status_step >= 3 %}completed{% endif %}">
+                    <div class="bz-step-circle">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <div class="bz-step-label">Shipped</div>
+                </div>
+
+                <!-- Step 4: Out for Delivery -->
+                <div class="bz-step-item {% if order.status_step >= 4 %}completed{% endif %}">
+                    <div class="bz-step-circle">
+                        <i class="fa-solid fa-person-biking"></i>
+                    </div>
+                    <div class="bz-step-label">Out for Delivery</div>
+                </div>
+
+                <!-- Step 5: Delivered -->
+                <div class="bz-step-item {% if order.status_step == 5 %}completed{% endif %}">
+                    <div class="bz-step-circle">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="bz-step-label">Delivered</div>
+                </div>
+            </div>
+
+            {% if order.estimated_delivery %}
+                <div class="text-center text-muted small">
+                    Estimated Delivery: <strong class="text-success">{{ order.estimated_delivery|date:"l, d M Y" }}</strong>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <!-- Tracking Notes Log -->
+        {% if order.tracking_notes %}
+            <div class="mt-4 pt-3 border-top">
+                <h6 class="fw-bold small text-muted text-uppercase mb-3">Shipment Activity Log</h6>
+                <div class="ps-3 border-start border-2 border-primary">
+                    {% for note in order.tracking_notes %}
+                        <div class="mb-3 position-relative">
+                            <div class="fw-bold small text-dark">{{ note.status }} - <span class="text-muted fw-normal">{{ note.timestamp }}</span></div>
+                            <div class="small text-secondary">{{ note.detail }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- DETAILS ROW (SHIPPING & PAYMENT) -->
+    <div class="row g-4 mb-4">
+        <!-- Shipping Address -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h6 class="fw-bold text-uppercase text-muted mb-3"><i class="fa-solid fa-location-dot me-2 text-danger"></i>Delivery Address</h6>
+                <div class="text-dark small" style="white-space: pre-line; line-height: 1.6;">
+                    {{ order.shipping_address_snapshot }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h6 class="fw-bold text-uppercase text-muted mb-3"><i class="fa-solid fa-credit-card me-2 text-primary"></i>Payment Details</h6>
+                <div class="d-flex justify-content-between mb-1 small">
+                    <span class="text-muted">Payment Method:</span>
+                    <strong class="text-dark">{{ order.get_payment_method_display }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-1 small">
+                    <span class="text-muted">Payment Status:</span>
+                    <span class="badge {% if order.payment_status == 'PAID' %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ order.get_payment_status_display }}
+                    </span>
+                </div>
+                {% if order.transaction_id %}
+                    <div class="d-flex justify-content-between mb-1 small">
+                        <span class="text-muted">Transaction ID:</span>
+                        <code class="text-dark">{{ order.transaction_id }}</code>
+                    </div>
+                {% endif %}
+                <hr class="my-2 text-muted">
+                <div class="d-flex justify-content-between small mb-1">
+                    <span class="text-muted">Total MRP:</span>
+                    <span>₹{{ order.total_mrp|intcomma }}</span>
+                </div>
+                <div class="d-flex justify-content-between small mb-1 text-success">
+                    <span>Discount:</span>
+                    <span>- ₹{{ order.product_discount|intcomma }}</span>
+                </div>
+                {% if order.coupon_discount > 0 %}
+                    <div class="d-flex justify-content-between small mb-1 text-success">
+                        <span>Coupon ({{ order.coupon_code }}):</span>
+                        <span>- ₹{{ order.coupon_discount|intcomma }}</span>
+                    </div>
+                {% endif %}
+                <div class="d-flex justify-content-between small mb-2">
+                    <span class="text-muted">Delivery Charges:</span>
+                    <span>{% if order.delivery_charge == 0 %}<strong class="text-success">FREE</strong>{% else %}₹{{ order.delivery_charge|intcomma }}{% endif %}</span>
+                </div>
+                <div class="d-flex justify-content-between fw-bold fs-6 border-top pt-2">
+                    <span>Total Amount Paid:</span>
+                    <span>₹{{ order.final_total|intcomma }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER ITEMS CARD -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h6 class="fw-bold mb-0 text-dark">Items in this Package</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="bg-light small text-muted">
+                        <tr>
+                            <th class="ps-4">Product</th>
+                            <th>SKU</th>
+                            <th>Unit Price</th>
+                            <th>Quantity</th>
+                            <th class="text-end pe-4">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded p-1 bg-light border" style="width: 50px; height: 50px;">
+                                            <img src="{{ item.product_image_url }}" alt="{{ item.product_title }}" style="max-height: 40px; max-width: 40px; object-fit: contain;">
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold small text-dark">{{ item.product_title }}</div>
+                                            {% if item.product %}
+                                                <a href="{{ item.product.get_absolute_url }}" class="small text-primary text-decoration-none">View Product Page</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="small text-muted">{{ item.product_sku }}</td>
+                                <td class="small">₹{{ item.price|intcomma }}</td>
+                                <td class="small">{{ item.quantity }}</td>
+                                <td class="text-end pe-4 fw-bold">₹{{ item.total_price|intcomma }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CANCEL MODAL -->
+{% if order.can_cancel %}
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-danger" id="cancelModalLabel">Cancel Order #{{ order.order_number }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted">Are you sure you want to cancel this order? Once cancelled, the items will be returned to inventory.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Order</button>
+                    <a href="{% url 'orders:cancel_order' order.order_number %}" class="btn btn-danger fw-bold">Yes, Cancel Order</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

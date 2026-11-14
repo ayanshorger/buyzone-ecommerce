@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Order Confirmed - #{% firstof order.order_number %} | Buyzone{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card border-0 shadow-sm text-center p-4 p-md-5">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 76px; height: 76px;">
+                        <i class="fa-solid fa-check fs-1"></i>
+                    </div>
+                </div>
+                <h3 class="fw-bold text-dark mb-1">Thank you for your order!</h3>
+                <p class="text-muted small mb-4">
+                    Your order has been placed and confirmed. We have sent a confirmation email with all details.
+                </p>
+
+                <div class="border rounded-3 p-3 bg-light text-start mb-4">
+                    <div class="row g-2 small">
+                        <div class="col-6">
+                            <span class="text-muted">Order ID:</span>
+                            <div class="fw-bold text-dark">{{ order.order_number }}</div>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted">Estimated Delivery:</span>
+                            <div class="fw-bold text-success">{{ order.estimated_delivery|date:"l, d M Y"|default:"Within 3 Days" }}</div>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted">Total Amount:</span>
+                            <div class="fw-bold text-dark">₹{{ order.final_total|intcomma }}</div>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted">Payment Method:</span>
+                            <div class="fw-bold text-dark">{{ order.get_payment_method_display }} ({{ order.get_payment_status_display }})</div>
+                        </div>
+                        <div class="col-12 mt-2 pt-2 border-top">
+                            <span class="text-muted">Delivery Address:</span>
+                            <div class="text-dark fw-semibold" style="white-space: pre-line;">{{ order.shipping_address_snapshot }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="{% url 'orders:order_detail' order.order_number %}" class="btn btn-primary fw-bold px-4 py-2">
+                        <i class="fa-solid fa-truck-fast me-2"></i> Track Your Package
+                    </a>
+                    <a href="{% url 'orders:order_invoice' order.order_number %}" class="btn btn-outline-secondary fw-bold px-3 py-2" target="_blank">
+                        <i class="fa-solid fa-file-invoice me-1"></i> View Invoice
+                    </a>
+                    <a href="{% url 'core:home' %}" class="btn btn-light fw-bold px-3 py-2 border">
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

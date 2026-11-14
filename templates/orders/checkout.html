@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Checkout - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container px-lg-4 mt-3">
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <h4 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-lock text-success me-2"></i>Secure Checkout</h4>
+        <span class="badge bg-light text-muted border">SSL 256-Bit Encrypted</span>
+    </div>
+
+    <form action="{% url 'orders:checkout' %}" method="POST" id="checkoutForm">
+        {% csrf_token %}
+        <div class="row g-4">
+            <!-- MAIN CHECKOUT STEPS -->
+            <div class="col-lg-8">
+
+                <!-- STEP 1: DELIVERY ADDRESS -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary rounded-circle px-2 py-1">1</span>
+                            <h6 class="fw-bold mb-0 text-uppercase">Delivery Address</h6>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm fw-bold" data-bs-toggle="collapse" data-bs-target="#newAddressFormCollapse">
+                            <i class="fa-solid fa-plus me-1"></i> Add New Address
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Hidden input for selected address -->
+                        <input type="hidden" name="selected_address_id" id="id_selected_address_id" value="{% if user_addresses %}{{ user_addresses.0.id }}{% endif %}">
+
+                        <!-- Saved Addresses Grid -->
+                        {% if user_addresses %}
+                            <div class="row row-cols-1 row-cols-md-2 g-3 mb-3">
+                                {% for addr in user_addresses %}
+                                    <div class="col">
+                                        <div class="bz-address-card bz-checkout-addr-card {% if forloop.first %}selected{% endif %}" data-address-id="{{ addr.id }}">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <strong class="text-dark">{{ addr.full_name }}</strong>
+                                                <span class="badge bg-secondary" style="font-size: 0.7rem;">{{ addr.get_address_type_display }}</span>
+                                            </div>
+                                            <div class="small text-muted mb-2">
+                                                {{ addr.street_address }}{% if addr.landmark %}, {{ addr.landmark }}{% endif %}<br>
+                                                {{ addr.city }}, {{ addr.state }} - <strong>{{ addr.postal_code }}</strong>
+                                            </div>
+                                            <div class="small text-dark">
+                                                <i class="fa-solid fa-phone me-1 text-muted"></i>{{ addr.phone }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Collapsible New Address Form -->
+                        <div class="collapse {% if not user_addresses %}show{% endif %}" id="newAddressFormCollapse">
+                            <div class="p-3 bg-light rounded border">
+                                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Enter Delivery Information</h6>
+                                <div class="row g-2">
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label small fw-bold">Full Name *</label>
+                                        {{ form.full_name }}
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label small fw-bold">10-Digit Mobile Number *</label>
+                                        {{ form.phone }}
+                                    </div>
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label small fw-bold">Flat, House no., Building, Street *</label>
+                                        {{ form.street_address }}
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small fw-bold">PIN Code *</label>
+                                        {{ form.postal_code }}
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small fw-bold">City / Town *</label>
+                                        {{ form.city }}
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small fw-bold">State *</label>
+                                        {{ form.state }}
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label small fw-bold">Landmark (Optional)</label>
+                                        {{ form.landmark }}
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label small fw-bold">Address Type</label>
+                                        {{ form.address_type }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: ORDER SUMMARY (REVIEW ITEMS) -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary rounded-circle px-2 py-1">2</span>
+                        <h6 class="fw-bold mb-0 text-uppercase">Order Items ({{ cart_items.count }})</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for item in cart_items %}
+                                <div class="list-group-item d-flex align-items-center justify-content-between p-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="{{ item.product.get_image }}" alt="{{ item.product.title }}" style="width: 50px; height: 50px; object-fit: contain;">
+                                        <div>
+                                            <div class="fw-semibold small text-dark text-truncate" style="max-width: 380px;">{{ item.product.title }}</div>
+                                            <div class="small text-muted">Qty: {{ item.quantity }} | Sold by: Buyzone Retail</div>
+                                        </div>
+                                    </div>
+                                    <div class="fw-bold text-dark">₹{{ item.subtotal|intcomma }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: PAYMENT METHOD -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary rounded-circle px-2 py-1">3</span>
+                        <h6 class="fw-bold mb-0 text-uppercase">Select Payment Option</h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- UPI Option -->
+                        <div class="form-check p-3 border rounded mb-3 bg-light">
+                            <input class="form-check-input ms-0 me-2" type="radio" name="payment_method" id="pay_upi" value="UPI" checked>
+                            <label class="form-check-label fw-bold text-dark w-100" for="pay_upi">
+                                <i class="fa-solid fa-qrcode text-primary me-2"></i> UPI / QR Code Scan (Google Pay, PhonePe, Paytm)
+                            </label>
+                            <div id="panel-upi" class="mt-3 p-3 bg-white border rounded">
+                                <div class="row align-items-center">
+                                    <div class="col-sm-5 text-center border-end">
+                                        <!-- Simulated QR Code -->
+                                        <div class="p-2 border rounded d-inline-block bg-light mb-1">
+                                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=buyzone@icici&pn=BuyzoneRetail&am={{ final_total }}" alt="UPI QR Code" class="img-fluid" style="width: 130px; height: 130px;">
+                                        </div>
+                                        <div class="text-muted" style="font-size: 0.72rem;">Scan with any UPI App</div>
+                                    </div>
+                                    <div class="col-sm-7 pt-2 pt-sm-0 ps-sm-3">
+                                        <label class="form-label small fw-bold">Or enter UPI ID</label>
+                                        {{ form.upi_id }}
+                                        <div class="form-text small text-muted">A payment request will be sent to your UPI handle.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Option -->
+                        <div class="form-check p-3 border rounded mb-3">
+                            <input class="form-check-input ms-0 me-2" type="radio" name="payment_method" id="pay_card" value="CARD">
+                            <label class="form-check-label fw-bold text-dark w-100" for="pay_card">
+                                <i class="fa-solid fa-credit-card text-warning me-2"></i> Credit or Debit Card (Visa, Mastercard, RuPay)
+                            </label>
+                            <div id="panel-card" class="mt-3 p-3 bg-light border rounded d-none">
+                                <div class="row g-2">
+                                    <div class="col-12 mb-2">
+                                        <label class="form-label small fw-bold">Card Number</label>
+                                        {{ form.card_number }}
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label small fw-bold">Cardholder Name</label>
+                                        {{ form.card_holder }}
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label small fw-bold">Expiry (MM/YY)</label>
+                                        {{ form.card_expiry }}
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label small fw-bold">CVV</label>
+                                        {{ form.card_cvv }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Net Banking Option -->
+                        <div class="form-check p-3 border rounded mb-3">
+                            <input class="form-check-input ms-0 me-2" type="radio" name="payment_method" id="pay_nb" value="NETBANKING">
+                            <label class="form-check-label fw-bold text-dark w-100" for="pay_nb">
+                                <i class="fa-solid fa-building-columns text-info me-2"></i> Net Banking
+                            </label>
+                            <div id="panel-netbanking" class="mt-3 p-3 bg-light border rounded d-none">
+                                <label class="form-label small fw-bold">Select Your Bank</label>
+                                {{ form.bank_name }}
+                            </div>
+                        </div>
+
+                        <!-- Cash on Delivery -->
+                        <div class="form-check p-3 border rounded mb-0">
+                            <input class="form-check-input ms-0 me-2" type="radio" name="payment_method" id="pay_cod" value="COD">
+                            <label class="form-check-label fw-bold text-dark w-100" for="pay_cod">
+                                <i class="fa-solid fa-hand-holding-dollar text-success me-2"></i> Cash on Delivery (Pay cash/UPI at doorstep)
+                            </label>
+                            <div id="panel-cod" class="mt-2 text-muted small d-none ps-3">
+                                You can pay via Cash or QR code on delivery to our logistics agent.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: ORDER SUMMARY & PLACE ORDER -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-3 sticky-top" style="top: 80px;">
+                    <h6 class="fw-bold text-uppercase text-muted border-bottom pb-2 mb-3">Order Summary</h6>
+
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span>Items ({{ cart_items.count }}):</span>
+                        <span>₹{{ total_mrp|intcomma }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2 small text-success">
+                        <span>Discount:</span>
+                        <span>- ₹{{ product_discount|intcomma }}</span>
+                    </div>
+
+                    {% if coupon_discount > 0 %}
+                        <div class="d-flex justify-content-between mb-2 small text-success">
+                            <span>Coupon ({{ coupon_code }}):</span>
+                            <span>- ₹{{ coupon_discount|intcomma }}</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between mb-3 small">
+                        <span>Delivery Fee:</span>
+                        <span>
+                            {% if delivery_charge == 0 %}
+                                <span class="text-success fw-bold">FREE</span>
+                            {% else %}
+                                ₹{{ delivery_charge|intcomma }}
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between border-top border-bottom py-3 mb-3">
+                        <strong class="fs-5 text-dark">Order Total:</strong>
+                        <strong class="fs-5 text-dark">₹{{ final_total|intcomma }}</strong>
+                    </div>
+
+                    <button type="submit" class="btn bz-btn-buy w-100 py-3 fs-6 mb-3 shadow">
+                        <i class="fa-solid fa-shield-halved me-2"></i> Place Your Order
+                    </button>
+
+                    <div class="text-muted small text-center" style="font-size: 0.75rem; line-height: 1.5;">
+                        By placing your order, you agree to Buyzone’s <a href="#">Conditions of Use</a> and <a href="#">Privacy Notice</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

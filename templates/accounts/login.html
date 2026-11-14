@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-sm p-4">
+                <div class="text-center mb-4">
+                    <a href="{% url 'core:home' %}" class="bz-logo d-inline-block">
+                        <div class="brand-text text-dark">Buy<span class="text-warning">zone</span></div>
+                    </a>
+                    <h5 class="fw-bold mt-2 text-dark">Sign in to your account</h5>
+                </div>
+
+                <form method="POST" action="{% url 'accounts:login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next|default:'' }}">
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label small fw-bold">Username or Email</label>
+                        {{ form.username }}
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label for="id_password" class="form-label small fw-bold">Password</label>
+                            <a href="#" class="small text-primary text-decoration-none">Forgot Password?</a>
+                        </div>
+                        {{ form.password }}
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold shadow-sm mb-3">
+                        Sign In
+                    </button>
+
+                    <div class="text-center small text-muted mb-4">
+                        By continuing, you agree to Buyzone’s Conditions of Use and Privacy Notice.
+                    </div>
+
+                    <!-- DEMO ACCOUNTS HELPER BOX -->
+                    <div class="p-3 bg-light rounded border mb-3">
+                        <div class="fw-bold small text-muted text-uppercase mb-2">
+                            <i class="fa-solid fa-key me-1 text-warning"></i> Quick Demo Logins
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1 small">
+                            <span>Demo Shopper:</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="fillDemo('shopper', 'shopper123')">
+                                Auto-Fill Shopper
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center small">
+                            <span>Admin Portal:</span>
+                            <button type="button" class="btn btn-sm btn-outline-dark py-0" onclick="fillDemo('admin', 'admin123')">
+                                Auto-Fill Admin
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center small">
+                        New to Buyzone? <a href="{% url 'accounts:register' %}" class="text-primary fw-bold text-decoration-none">Create your account</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillDemo(username, password) {
+    document.getElementById('id_username').value = username;
+    document.getElementById('id_password').value = password;
+}
+</script>
+{% endblock %}

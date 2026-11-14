@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Buyzone - Online Shopping (Amazon & Flipkart Experience){% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 mt-3">
+
+    <!-- HERO CAROUSEL -->
+    <div id="buyzoneHeroCarousel" class="carousel slide bz-hero-carousel" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            {% for slide in hero_slides %}
+                <button type="button" data-bs-target="#buyzoneHeroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}"></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+            {% for slide in hero_slides %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="4500">
+                    <div class="bz-hero-slide" style="background-image: url('{{ slide.image }}');">
+                        <div class="bz-hero-overlay"></div>
+                        <div class="bz-hero-content">
+                            <span class="bz-deal-badge">{{ slide.badge }}</span>
+                            <h1 class="display-6 fw-bold mb-2">{{ slide.title }}</h1>
+                            <p class="lead mb-4 text-light" style="font-size: 1.05rem;">{{ slide.subtitle }}</p>
+                            <a href="{{ slide.btn_link }}" class="btn btn-warning btn-lg fw-bold px-4 shadow">
+                                {{ slide.btn_text }} <i class="fa-solid fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#buyzoneHeroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#buyzoneHeroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <!-- QUICK TRUST PERKS -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="row text-center g-3">
+                <div class="col-6 col-md-3 border-end">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fa-solid fa-bolt text-warning fs-3"></i>
+                        <div class="text-start">
+                            <div class="fw-bold small">Superfast Delivery</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Next-day dispatch</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 border-end">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fa-solid fa-shield-check text-primary fs-3"></i>
+                        <div class="text-start">
+                            <div class="fw-bold small">100% Genuine Products</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Direct from brands</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 border-end">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fa-solid fa-rotate-left text-success fs-3"></i>
+                        <div class="text-start">
+                            <div class="fw-bold small">7-Day Free Replacement</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Hassle-free return policy</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fa-solid fa-credit-card text-danger fs-3"></i>
+                        <div class="text-start">
+                            <div class="fw-bold small">Instant Bank Offers</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Up to ₹5,000 on cards</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP CATEGORIES CIRCULAR ROW -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Shop by Popular Departments</h5>
+                <a href="{% url 'store:product_list' %}" class="btn btn-sm btn-outline-primary fw-semibold">View All</a>
+            </div>
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-6 g-3 text-center">
+                {% for cat in root_categories %}
+                    <div class="col">
+                        <a href="{% url 'store:category_detail' cat.slug %}" class="text-decoration-none text-dark d-block p-2 rounded hover-shadow transition">
+                            <div class="rounded-circle overflow-hidden mx-auto mb-2 shadow-sm" style="width: 85px; height: 85px; background: #eee;">
+                                <img src="{{ cat.get_image }}" alt="{{ cat.name }}" class="w-100 h-100 object-fit-cover">
+                            </div>
+                            <div class="fw-bold small text-truncate">{{ cat.name }}</div>
+                            <div class="text-muted" style="font-size: 0.72rem;">Explore Deals</div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- DEAL OF THE DAY (WITH COUNTDOWN TIMER) -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-0 d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <h4 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-fire text-danger me-2"></i>Deals of the Day</h4>
+                <!-- Countdown Timer -->
+                <div class="bz-flash-timer">
+                    <i class="fa-regular fa-clock"></i> Ends in:
+                    <span id="deal-hours" class="bz-timer-digits">08</span> :
+                    <span id="deal-mins" class="bz-timer-digits">42</span> :
+                    <span id="deal-secs" class="bz-timer-digits">15</span>
+                </div>
+            </div>
+            <a href="{% url 'store:product_list' %}?discount=20" class="btn btn-primary btn-sm fw-bold px-3">
+                See All Deals <i class="fa-solid fa-chevron-right ms-1"></i>
+            </a>
+        </div>
+        <div class="card-body pt-0">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-3">
+                {% for prod in deal_of_the_day %}
+                    <div class="col">
+                        <div class="bz-product-card">
+                            <button class="bz-wishlist-btn bz-ajax-wishlist" data-product-id="{{ prod.id }}" title="Save to Wishlist">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <a href="{{ prod.get_absolute_url }}" class="bz-card-img-wrapper">
+                                <img src="{{ prod.get_image }}" alt="{{ prod.title }}">
+                            </a>
+                            <div class="bz-card-body">
+                                <div class="bz-product-brand">{{ prod.brand }}</div>
+                                <a href="{{ prod.get_absolute_url }}" class="bz-product-title">{{ prod.title }}</a>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="bz-rating-pill">{{ prod.rating }} ★</span>
+                                    <span class="text-muted" style="font-size: 0.75rem;">({{ prod.num_reviews }})</span>
+                                </div>
+                                <div class="bz-price-wrap">
+                                    <span class="bz-selling-price">₹{{ prod.selling_price|intcomma }}</span>
+                                    <span class="bz-mrp-price">₹{{ prod.mrp_price|intcomma }}</span>
+                                    <span class="bz-discount-badge">{{ prod.discount_percentage }}% off</span>
+                                </div>
+                                <div class="mt-auto pt-2">
+                                    <button class="btn btn-warning btn-sm w-100 fw-bold bz-ajax-add-cart" data-product-id="{{ prod.id }}">
+                                        <i class="fa-solid fa-cart-plus me-1"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMOTIONAL HERO BANNER STRIP -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="p-4 rounded-3 text-white d-flex align-items-center justify-content-between shadow-sm" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 180px;">
+                <div>
+                    <span class="badge bg-warning text-dark mb-2 fw-bold">FLAGSHIPS ON SALE</span>
+                    <h3 class="fw-bold mb-1">Upgrade to iPhone 15 Pro</h3>
+                    <p class="mb-3 text-light small">A17 Pro Titanium with flat ₹15,000 instant discount</p>
+                    <a href="{% url 'store:product_list' %}?q=iPhone" class="btn btn-light btn-sm fw-bold px-3">Shop Now</a>
+                </div>
+                <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&auto=format&fit=crop&q=80" alt="iPhone" style="max-height: 140px; border-radius: 8px;" class="d-none d-sm-block">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-4 rounded-3 text-white d-flex align-items-center justify-content-between shadow-sm" style="background: linear-gradient(135deg, #d31027 0%, #ea384d 100%); min-height: 180px;">
+                <div>
+                    <span class="badge bg-white text-danger mb-2 fw-bold">SNEAKER FEST</span>
+                    <h3 class="fw-bold mb-1">Air Jordan Retro Collection</h3>
+                    <p class="mb-3 text-light small">The legendary Chicago kicks with fast dispatch</p>
+                    <a href="{% url 'store:product_list' %}?q=Jordan" class="btn btn-light btn-sm fw-bold px-3">Explore Kicks</a>
+                </div>
+                <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?w=300&auto=format&fit=crop&q=80" alt="Jordan" style="max-height: 140px; border-radius: 8px;" class="d-none d-sm-block">
+            </div>
+        </div>
+    </div>
+
+    <!-- BESTSELLERS IN TECH & AUDIO -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+            <div>
+                <h4 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-trophy text-warning me-2"></i>Best Sellers & Trending</h4>
+                <div class="text-muted small">Top purchased items with 4.5+ star verified ratings</div>
+            </div>
+            <a href="{% url 'store:product_list' %}?sort=rating" class="btn btn-outline-primary btn-sm fw-bold">
+                View All <i class="fa-solid fa-chevron-right ms-1"></i>
+            </a>
+        </div>
+        <div class="card-body pt-0">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+                {% for prod in bestsellers %}
+                    <div class="col">
+                        <div class="bz-product-card">
+                            <span class="position-absolute top-0 start-0 badge bg-danger m-2" style="font-size: 0.7rem; z-index: 4;">
+                                #1 Best Seller
+                            </span>
+                            <button class="bz-wishlist-btn bz-ajax-wishlist" data-product-id="{{ prod.id }}" title="Save to Wishlist">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <a href="{{ prod.get_absolute_url }}" class="bz-card-img-wrapper">
+                                <img src="{{ prod.get_image }}" alt="{{ prod.title }}">
+                            </a>
+                            <div class="bz-card-body">
+                                <div class="bz-product-brand">{{ prod.brand }}</div>
+                                <a href="{{ prod.get_absolute_url }}" class="bz-product-title">{{ prod.title }}</a>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="bz-rating-pill">{{ prod.rating }} ★</span>
+                                    <span class="text-muted small">({{ prod.num_reviews }} ratings)</span>
+                                </div>
+                                <div class="bz-price-wrap">
+                                    <span class="bz-selling-price">₹{{ prod.selling_price|intcomma }}</span>
+                                    <span class="bz-mrp-price">₹{{ prod.mrp_price|intcomma }}</span>
+                                    <span class="bz-discount-badge">{{ prod.discount_percentage }}% off</span>
+                                </div>
+                                <div class="bz-assured-tag mb-2">
+                                    <i class="fa-solid fa-check-circle"></i> Buyzone Assured
+                                </div>
+                                <div class="mt-auto pt-2">
+                                    <button class="btn btn-warning btn-sm w-100 fw-bold bz-ajax-add-cart" data-product-id="{{ prod.id }}">
+                                        <i class="fa-solid fa-cart-plus me-1"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

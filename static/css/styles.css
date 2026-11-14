@@ -1,0 +1,682 @@
+/* Buyzone E-Commerce Main Stylesheet (Amazon & Flipkart Inspired) */
+
+:root {
+    --bz-navy-dark: #131921;
+    --bz-navy-medium: #232f3e;
+    --bz-blue: #2874f0;
+    --bz-blue-hover: #125cdb;
+    --bz-yellow: #febd69;
+    --bz-orange: #fb641b;
+    --bz-amber: #ff9f00;
+    --bz-green: #388e3c;
+    --bz-red: #d32f2f;
+    --bz-bg-gray: #f1f3f6;
+    --bz-card-border: #e0e0e0;
+    --bz-text-muted: #878787;
+    --bz-text-main: #212121;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bz-bg-gray);
+    color: var(--bz-text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================================
+   Header & Navigation
+   ========================================================================== */
+.bz-top-header {
+    background-color: var(--bz-navy-dark);
+    color: #ffffff;
+    padding: 10px 0;
+    font-size: 0.9rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.bz-logo {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.bz-logo .brand-text {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+}
+
+.bz-logo .brand-text span {
+    color: var(--bz-yellow);
+}
+
+.bz-logo .brand-sub {
+    font-size: 0.68rem;
+    color: #ccc;
+    font-style: italic;
+    margin-top: 2px;
+}
+
+.bz-delivery-box {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.bz-delivery-box:hover {
+    border-color: #fff;
+}
+
+.bz-search-group {
+    display: flex;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.bz-search-category {
+    max-width: 140px;
+    border: none;
+    background-color: #e6e6e6;
+    font-size: 0.82rem;
+    padding-left: 10px;
+    border-right: 1px solid #ccc;
+    outline: none;
+}
+
+.bz-search-input {
+    border: none;
+    padding: 9px 14px;
+    font-size: 0.95rem;
+    width: 100%;
+    outline: none;
+}
+
+.bz-search-btn {
+    background-color: var(--bz-yellow);
+    border: none;
+    padding: 0 18px;
+    color: #111;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.bz-search-btn:hover {
+    background-color: #f3a847;
+}
+
+.bz-nav-action {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: border-color 0.2s;
+}
+
+.bz-nav-action:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.bz-cart-badge {
+    position: absolute;
+    top: -5px;
+    left: 18px;
+    background-color: var(--bz-orange);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    border-radius: 50%;
+    padding: 2px 6px;
+    line-height: 1;
+}
+
+.bz-sub-nav {
+    background-color: var(--bz-navy-medium);
+    padding: 6px 0;
+    font-size: 0.88rem;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.bz-sub-nav a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 5px 12px;
+    display: inline-block;
+    border-radius: 2px;
+    border: 1px solid transparent;
+}
+
+.bz-sub-nav a:hover {
+    border-color: #ffffff;
+    background-color: rgba(255,255,255,0.05);
+}
+
+/* ==========================================================================
+   Hero & Home Components
+   ========================================================================== */
+.bz-hero-carousel {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.bz-hero-slide {
+    height: 380px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.bz-hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.1) 100%);
+}
+
+.bz-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 580px;
+    padding: 0 30px;
+    color: #ffffff;
+}
+
+.bz-deal-badge {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.bz-flash-timer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #d32f2f;
+    background: #ffebee;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.88rem;
+}
+
+.bz-timer-digits {
+    font-family: monospace;
+    font-size: 1.05rem;
+    background: #d32f2f;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   Product Cards & Grid
+   ========================================================================== */
+.bz-product-card {
+    background: #ffffff;
+    border: 1px solid var(--bz-card-border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.bz-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.bz-card-img-wrapper {
+    position: relative;
+    height: 220px;
+    background-color: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    overflow: hidden;
+}
+
+.bz-card-img-wrapper img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.bz-product-card:hover .bz-card-img-wrapper img {
+    transform: scale(1.05);
+}
+
+.bz-wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ffffff;
+    border: 1px solid #eee;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: color 0.2s, transform 0.2s;
+    z-index: 5;
+}
+
+.bz-wishlist-btn:hover, .bz-wishlist-btn.active {
+    color: #e91e63;
+    transform: scale(1.1);
+}
+
+.bz-card-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.bz-product-brand {
+    font-size: 0.78rem;
+    color: var(--bz-text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.bz-product-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #212121;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-decoration: none;
+    margin-bottom: 6px;
+}
+
+.bz-product-title:hover {
+    color: var(--bz-blue);
+}
+
+.bz-rating-pill {
+    background-color: var(--bz-green);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.bz-price-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.bz-selling-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #212121;
+}
+
+.bz-mrp-price {
+    font-size: 0.85rem;
+    color: var(--bz-text-muted);
+    text-decoration: line-through;
+}
+
+.bz-discount-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--bz-green);
+}
+
+.bz-assured-tag {
+    font-size: 0.72rem;
+    font-style: italic;
+    font-weight: 800;
+    color: var(--bz-blue);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* ==========================================================================
+   Product Detail Page (PDP)
+   ========================================================================== */
+.bz-pdp-gallery {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--bz-card-border);
+    position: sticky;
+    top: 90px;
+}
+
+.bz-pdp-main-img {
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 16px;
+    cursor: zoom-in;
+}
+
+.bz-pdp-main-img img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.bz-pdp-thumbs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.bz-thumb-btn {
+    width: 64px;
+    height: 64px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    padding: 4px;
+    background: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s;
+}
+
+.bz-thumb-btn.active, .bz-thumb-btn:hover {
+    border-color: var(--bz-blue);
+}
+
+.bz-thumb-btn img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.bz-btn-cart {
+    background-color: var(--bz-yellow);
+    color: #111;
+    font-weight: 700;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.bz-btn-cart:hover {
+    background-color: #f3a847;
+    color: #111;
+}
+
+.bz-btn-buy {
+    background-color: var(--bz-orange);
+    color: #ffffff;
+    font-weight: 700;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.bz-btn-buy:hover {
+    background-color: #e0530f;
+    color: #ffffff;
+}
+
+.bz-offer-box {
+    border: 1px dashed #4caf50;
+    background: #f1f8e9;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 16px 0;
+}
+
+/* ==========================================================================
+   Order Tracking & Timeline
+   ========================================================================== */
+.bz-tracking-stepper {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin: 30px 0;
+}
+
+.bz-tracking-stepper::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 5%;
+    right: 5%;
+    height: 4px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.bz-stepper-progress {
+    position: absolute;
+    top: 20px;
+    left: 5%;
+    height: 4px;
+    background: var(--bz-green);
+    z-index: 2;
+    transition: width 0.4s ease;
+}
+
+.bz-step-item {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    width: 18%;
+}
+
+.bz-step-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    font-size: 1.1rem;
+    color: #888;
+    transition: all 0.3s ease;
+}
+
+.bz-step-item.completed .bz-step-circle {
+    border-color: var(--bz-green);
+    background: var(--bz-green);
+    color: #ffffff;
+}
+
+.bz-step-item.active .bz-step-circle {
+    border-color: var(--bz-blue);
+    background: var(--bz-blue);
+    color: #ffffff;
+    box-shadow: 0 0 0 5px rgba(40, 116, 240, 0.2);
+}
+
+.bz-step-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.bz-step-item.completed .bz-step-label,
+.bz-step-item.active .bz-step-label {
+    color: #111;
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   Checkout & Forms
+   ========================================================================== */
+.bz-payment-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+    margin-bottom: 12px;
+}
+
+.bz-payment-card.active, .bz-payment-card:hover {
+    border-color: var(--bz-blue);
+    background-color: #f7faff;
+}
+
+.bz-address-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.bz-address-card.selected {
+    border-color: var(--bz-blue);
+    background-color: #f3f8ff;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.bz-footer {
+    background-color: var(--bz-navy-medium);
+    color: #ccc;
+    font-size: 0.88rem;
+    margin-top: auto;
+}
+
+.bz-footer a {
+    color: #ddd;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.bz-footer a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.bz-footer-bottom {
+    background-color: var(--bz-navy-dark);
+    padding: 20px 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.8rem;
+    color: white;
+}
+
+.copyright-txt{
+    color: #ddd;
+}
+
+/* ==========================================================================
+   Interactive Star Rating Selector (Review Modal)
+   ========================================================================== */
+.bz-star-rating-select {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 4px;
+    font-size: 1.8rem;
+}
+
+.bz-star-rating-select input {
+    display: none;
+}
+
+.bz-star-rating-select label {
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.bz-star-rating-select label:hover,
+.bz-star-rating-select label:hover ~ label,
+.bz-star-rating-select input:checked ~ label {
+    color: var(--bz-amber);
+}
+
+/* ==========================================================================
+   Responsive & Accessibility
+   ========================================================================== */
+@media (max-width: 768px) {
+    .bz-hero-slide {
+        height: 260px;
+    }
+    .bz-hero-content h1 {
+        font-size: 1.5rem;
+    }
+    .bz-tracking-stepper {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .bz-tracking-stepper::before, .bz-stepper-progress {
+        display: none;
+    }
+    .bz-step-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-align: left;
+    }
+    .bz-step-circle {
+        margin: 0;
+    }
+}

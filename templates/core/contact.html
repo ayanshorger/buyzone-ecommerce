@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}24x7 Customer Support - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <span class="badge bg-primary text-white fw-bold mb-2">24x7 HELPDESK</span>
+                    <h3 class="fw-bold text-dark">We're Here to Help You</h3>
+                    <p class="text-muted small">Have queries regarding your orders, delivery, refunds or sellers? Get in touch with our team.</p>
+                </div>
+
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 bg-light">
+                            <i class="fa-solid fa-phone-volume fs-3 text-primary mb-2"></i>
+                            <div class="fw-bold small">Call Us</div>
+                            <div class="small text-muted">1800-202-9898 (Toll Free)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 bg-light">
+                            <i class="fa-solid fa-envelope fs-3 text-warning mb-2"></i>
+                            <div class="fw-bold small">Email Us</div>
+                            <div class="small text-muted">support@buyzone.com</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 bg-light">
+                            <i class="fa-solid fa-comments fs-3 text-success mb-2"></i>
+                            <div class="fw-bold small">Live Chat</div>
+                            <div class="small text-muted">Instant response 24/7</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-dark mb-3">Send us a Message</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Your Name *</label>
+                            <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Email Address *</label>
+                            <input type="email" name="email" class="form-control" placeholder="john@example.com" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Subject / Order Number (if applicable)</label>
+                            <input type="text" name="subject" class="form-control" placeholder="e.g. Inquiry regarding order #BZ-12345678">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">How can we help you? *</label>
+                            <textarea name="message" class="form-control" rows="4" placeholder="Describe your question or issue in detail..." required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-warning fw-bold px-4 py-2">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

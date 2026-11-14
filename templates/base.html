@@ -1,0 +1,250 @@
+{% load static humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Buyzone - Online Shopping for Electronics, Mobiles, Fashion & More{% endblock %}</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom Buyzone CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- TOP HEADER -->
+    <header class="bz-top-header">
+        <div class="container-fluid px-lg-4">
+            <div class="row align-items-center g-2 g-md-3">
+                <!-- Brand Logo -->
+                <div class="col-6 col-md-2 col-lg-2">
+                    <a href="{% url 'core:home' %}" class="bz-logo">
+                        <div class="brand-text">Buy<span>zone</span></div>
+                        <div class="brand-sub">Explore Plus <i class="fa-solid fa-bolt text-warning"></i></div>
+                    </a>
+                </div>
+
+                <!-- Delivery Location (Pin Code) -->
+                <div class="col-6 col-md-2 col-lg-2 d-none d-md-block">
+                    <div class="bz-delivery-box" data-bs-toggle="modal" data-bs-target="#locationModal">
+                        <i class="fa-solid fa-location-dot fs-5 me-2 text-warning"></i>
+                        <div class="lh-sm">
+                            <div style="font-size: 0.72rem; color: #ccc;">Deliver to</div>
+                            <div class="fw-bold text-truncate" style="max-width: 140px;">
+                                {% if user_address %}
+                                    {{ user_address.city }} {{ user_address.postal_code }}
+                                {% else %}
+                                    Select Address
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Global Search Bar -->
+                <div class="col-12 col-md-5 col-lg-5">
+                    <form action="{% url 'core:search' %}" method="GET" class="bz-search-group">
+                        <select name="category" class="bz-search-category d-none d-sm-block">
+                            <option value="">All Categories</option>
+                            {% for cat in nav_categories %}
+                                <option value="{{ cat.slug }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="q" class="bz-search-input" placeholder="Search for products, brands and more..." value="{{ request.GET.q|default:'' }}">
+                        <button type="submit" class="bz-search-btn" title="Search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- User Account, Wishlist & Cart -->
+                <div class="col-12 col-md-3 col-lg-3 text-end d-flex align-items-center justify-content-end gap-2">
+                    <!-- User Account Dropdown -->
+                    {% if user.is_authenticated %}
+                        <div class="dropdown">
+                            <a href="#" class="bz-nav-action dropdown-toggle" id="accountMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span style="font-size: 0.72rem; color: #ccc;">Hello, {{ user.first_name|default:user.username }}</span>
+                                <span class="fw-bold">Account & Orders</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="accountMenu">
+                                <li><a class="dropdown-item py-2" href="{% url 'accounts:profile' %}"><i class="fa-solid fa-user-circle me-2 text-primary"></i>My Profile</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'orders:order_history' %}"><i class="fa-solid fa-box-open me-2 text-warning"></i>My Orders</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'cart:wishlist_view' %}"><i class="fa-solid fa-heart me-2 text-danger"></i>My Wishlist</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'accounts:address_book' %}"><i class="fa-solid fa-address-book me-2 text-info"></i>Saved Addresses</a></li>
+                                {% if user.is_staff %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2 text-primary" href="/admin/" target="_blank"><i class="fa-solid fa-gauge-high me-2"></i>Admin Dashboard</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item py-2 text-danger" href="{% url 'accounts:logout' %}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-light fw-bold px-3 py-1 text-primary">
+                            Sign In
+                        </a>
+                    {% endif %}
+
+                    <!-- Wishlist Icon -->
+                    <a href="{% url 'cart:wishlist_view' %}" class="bz-nav-action position-relative" title="Wishlist">
+                        <i class="fa-regular fa-heart fs-5"></i>
+                        {% if wishlist_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger bz-wishlist-badge" style="font-size: 0.65rem;">
+                                {{ wishlist_count }}
+                            </span>
+                        {% endif %}
+                    </a>
+
+                    <!-- Cart Icon with counter -->
+                    <a href="{% url 'cart:cart_view' %}" class="bz-nav-action d-flex flex-row align-items-center position-relative" title="Shopping Cart">
+                        <div class="position-relative me-2">
+                            <i class="fa-solid fa-cart-shopping fs-4"></i>
+                            <span class="bz-cart-badge">{{ cart_count|default:0 }}</span>
+                        </div>
+                        <span class="fw-bold d-none d-lg-inline">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SUB-NAVIGATION BAR (Departments) -->
+    <nav class="bz-sub-nav">
+        <div class="container-fluid px-lg-4 d-flex align-items-center overflow-x-auto text-nowrap">
+            <a href="{% url 'store:product_list' %}" class="fw-bold"><i class="fa-solid fa-bars me-1"></i> All Products</a>
+            {% for cat in nav_categories %}
+                <a href="{% url 'store:category_detail' cat.slug %}">
+                    <i class="fa-solid {{ cat.icon }} me-1 text-warning"></i> {{ cat.name }}
+                </a>
+            {% endfor %}
+            <a href="{% url 'store:product_list' %}?discount=25" class="text-warning fw-semibold"><i class="fa-solid fa-fire me-1"></i> Deal of the Day</a>
+            <a href="{% url 'core:about' %}">About Us</a>
+            <a href="{% url 'core:contact' %}">24/7 Support</a>
+        </div>
+    </nav>
+
+    <!-- TOAST / ALERT MESSAGES -->
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                    {% if message.tags == 'success' %}
+                        <i class="fa-solid fa-circle-check me-2"></i>
+                    {% elif message.tags == 'danger' or message.tags == 'error' %}
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                    {% else %}
+                        <i class="fa-solid fa-circle-info me-2"></i>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- MAIN BODY CONTENT -->
+    <main class="flex-grow-1 pb-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bz-footer">
+        <div class="py-4 text-center border-bottom border-secondary border-opacity-25" style="background-color: rgba(255,255,255,0.04);">
+            <a href="#" class="text-white text-decoration-none small" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+                <i class="fa-solid fa-chevron-up me-1"></i> Back to top
+            </a>
+        </div>
+
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-6 col-md-3">
+                    <h6 class="text-white fw-bold mb-3">Get to Know Us</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'core:about' %}">About Buyzone</a></li>
+                        <li class="mb-2"><a href="#">Careers & Press</a></li>
+                        <li class="mb-2"><a href="#">Buyzone Science</a></li>
+                        <li class="mb-2"><a href="#">Corporate Governance</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="text-white fw-bold mb-3">Connect with Us</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#"><i class="fa-brands fa-facebook me-2"></i>Facebook</a></li>
+                        <li class="mb-2"><a href="#"><i class="fa-brands fa-x-twitter me-2"></i>Twitter / X</a></li>
+                        <li class="mb-2"><a href="#"><i class="fa-brands fa-instagram me-2"></i>Instagram</a></li>
+                        <li class="mb-2"><a href="#"><i class="fa-brands fa-youtube me-2"></i>YouTube</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="text-white fw-bold mb-3">Make Money with Us</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Sell on Buyzone</a></li>
+                        <li class="mb-2"><a href="#">Become an Affiliate</a></li>
+                        <li class="mb-2"><a href="#">Fulfillment by Buyzone</a></li>
+                        <li class="mb-2"><a href="#">Advertise Your Products</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h6 class="text-white fw-bold mb-3">Let Us Help You</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'accounts:profile' %}">Your Account</a></li>
+                        <li class="mb-2"><a href="{% url 'orders:order_history' %}">Your Orders</a></li>
+                        <li class="mb-2"><a href="#">Shipping Rates & Policies</a></li>
+                        <li class="mb-2"><a href="{% url 'core:contact' %}">Returns & 24/7 Help Centre</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bz-footer-bottom">
+            <div class="container text-center">
+                <div class="mb-2 d-flex justify-content-center gap-3">
+                    <span class="copyright-txt"><i class="fa-solid fa-shield-halved text-success me-1"></i> 100% Purchase Protection</span>
+                    <span class="copyright-txt"><i class="fa-solid fa-rotate-left text-warning me-1"></i> 7-Day Easy Returns</span>
+                    <span class="copyright-txt"><i class="fa-solid fa-truck text-info me-1"></i> Fast & Free Delivery</span>
+                </div>
+                <div>&copy; 2026, All rights reserved. Designed by Ayan Shorger</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Location Modal -->
+    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="locationModalLabel"><i class="fa-solid fa-location-dot text-primary me-2"></i>Choose your delivery location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Select your delivery PIN code to view product availability and delivery speeds for your region.</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter 6-digit PIN code" value="560103" maxlength="6">
+                        <button class="btn btn-warning fw-bold" type="button" data-bs-dismiss="modal">Apply PIN</button>
+                    </div>
+                    {% if user.is_authenticated and user_address %}
+                        <div class="border rounded p-3 bg-light">
+                            <div class="fw-bold small text-muted text-uppercase mb-1">Saved Address</div>
+                            <div class="fw-semibold">{{ user_address.full_name }}</div>
+                            <div class="small text-muted">{{ user_address.street_address }}, {{ user_address.city }} - {{ user_address.postal_code }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Buyzone JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

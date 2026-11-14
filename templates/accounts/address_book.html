@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Addresses - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container px-lg-4 mt-3">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}">Your Account</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Your Addresses</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="fw-bold text-dark mb-0">Your Addresses</h4>
+        <button type="button" class="btn btn-warning fw-bold btn-sm" data-bs-toggle="collapse" data-bs-target="#addAddressCollapse">
+            <i class="fa-solid fa-plus me-1"></i> Add Address
+        </button>
+    </div>
+
+    <!-- Collapsible Add Address Form -->
+    <div class="collapse mb-4" id="addAddressCollapse">
+        <div class="card border-0 shadow-sm p-4 bg-light">
+            <h5 class="fw-bold mb-3 text-dark">Add a new delivery address</h5>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Full Name *</label>
+                        {{ form.full_name }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">10-Digit Mobile Number *</label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold">Street Address *</label>
+                        {{ form.street_address }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold">PIN Code *</label>
+                        {{ form.postal_code }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold">City / Town *</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold">State *</label>
+                        {{ form.state }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Landmark (Optional)</label>
+                        {{ form.landmark }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Address Type</label>
+                        {{ form.address_type }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning fw-bold mt-3 px-4">
+                    Save Address
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Address Cards Grid -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for addr in addresses %}
+            <div class="col">
+                <div class="card border-0 shadow-sm p-3 h-100 position-relative {% if addr.is_default %}border-primary border-2{% endif %}">
+                    {% if addr.is_default %}
+                        <span class="badge bg-primary position-absolute top-0 end-0 m-3">Default Delivery</span>
+                    {% endif %}
+                    <h6 class="fw-bold text-dark mb-1">{{ addr.full_name }}</h6>
+                    <span class="badge bg-secondary mb-2" style="font-size: 0.7rem; width: fit-content;">{{ addr.get_address_type_display }}</span>
+                    <p class="small text-muted mb-2 flex-grow-1" style="line-height: 1.5;">
+                        {{ addr.street_address }}<br>
+                        {% if addr.landmark %}Near {{ addr.landmark }}<br>{% endif %}
+                        {{ addr.city }}, {{ addr.state }} - {{ addr.postal_code }}<br>
+                        <i class="fa-solid fa-phone me-1"></i> Phone: {{ addr.phone }}
+                    </p>
+                    <div class="pt-2 border-top d-flex gap-2">
+                        <a href="{% url 'accounts:address_edit' addr.id %}" class="small text-primary fw-bold text-decoration-none">Edit</a>
+                        <span class="text-muted">|</span>
+                        <a href="{% url 'accounts:address_delete' addr.id %}" class="small text-danger fw-bold text-decoration-none" onclick="return confirm('Delete this address?')">Remove</a>
+                        {% if not addr.is_default %}
+                            <span class="text-muted">|</span>
+                            <a href="{% url 'accounts:address_set_default' addr.id %}" class="small text-secondary text-decoration-none">Set as Default</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p class="text-muted">You have no saved addresses. Click "Add Address" to register your first address.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

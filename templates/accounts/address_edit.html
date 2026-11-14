@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Address - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="fw-bold mb-3 text-dark">Edit Delivery Address</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Full Name *</label>
+                            {{ form.full_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">10-Digit Mobile Number *</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Street Address *</label>
+                            {{ form.street_address }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">PIN Code *</label>
+                            {{ form.postal_code }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">City / Town *</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">State *</label>
+                            {{ form.state }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Landmark (Optional)</label>
+                            {{ form.landmark }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Address Type</label>
+                            {{ form.address_type }}
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                {{ form.is_default }}
+                                <label class="form-check-label small fw-bold ms-1" for="{{ form.is_default.id_for_label }}">
+                                    Make this my default address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-warning fw-bold px-4">Update Address</button>
+                        <a href="{% url 'accounts:address_book' %}" class="btn btn-secondary px-3">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

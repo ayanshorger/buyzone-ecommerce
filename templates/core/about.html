@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-6">
+            <span class="badge bg-warning text-dark fw-bold mb-2">ABOUT BUYZONE</span>
+            <h2 class="display-6 fw-bold text-dark mb-3">India's Leading E-Commerce Shopping Hub</h2>
+            <p class="text-secondary" style="line-height: 1.8;">
+                Launched to empower consumers across the nation, <strong>Buyzone</strong> brings you millions of genuine products at unbeatable prices. From cutting-edge 5G smartphones and ultra-powerful laptops to trending designer fashion and daily home essentials, we make online shopping fast, secure, and delightful.
+            </p>
+            <div class="row g-3 mt-2">
+                <div class="col-6">
+                    <div class="border rounded p-3 text-center bg-white shadow-sm">
+                        <h3 class="fw-bold text-primary mb-0">10M+</h3>
+                        <div class="small text-muted">Happy Shoppers</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="border rounded p-3 text-center bg-white shadow-sm">
+                        <h3 class="fw-bold text-warning mb-0">100%</h3>
+                        <div class="small text-muted">Genuine Brands</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mt-4 mt-lg-0 text-center">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=80" alt="About Buyzone" class="img-fluid rounded-3 shadow">
+        </div>
+    </div>
+</div>
+{% endblock %}

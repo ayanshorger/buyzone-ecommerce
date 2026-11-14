@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}My Orders - Buyzone{% endblock %}
+
+{% block content %}
+<div class="container px-lg-4 mt-3">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'accounts:profile' %}">Your Account</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Your Orders</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 text-dark">Your Orders</h4>
+            <div class="text-muted small">{{ orders.count }} orders placed in total</div>
+        </div>
+        <a href="{% url 'store:product_list' %}" class="btn btn-warning fw-bold btn-sm">Shop More Deals</a>
+    </div>
+
+    {% if orders %}
+        <div class="d-flex flex-column gap-4">
+            {% for order in orders %}
+                <div class="card border-0 shadow-sm overflow-hidden">
+                    <!-- Order Card Header -->
+                    <div class="card-header bg-light py-3 border-bottom">
+                        <div class="row g-2 align-items-center small">
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted text-uppercase" style="font-size: 0.72rem;">Order Placed</span>
+                                <div class="fw-bold text-dark">{{ order.created_at|date:"d M Y" }}</div>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <span class="text-muted text-uppercase" style="font-size: 0.72rem;">Total</span>
+                                <div class="fw-bold text-dark">₹{{ order.final_total|intcomma }}</div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted text-uppercase" style="font-size: 0.72rem;">Ship To</span>
+                                <div class="fw-semibold text-truncate text-dark">{{ order.shipping_address.full_name|default:order.user.username }}</div>
+                            </div>
+                            <div class="col-6 col-md-4 text-md-end">
+                                <span class="text-muted text-uppercase" style="font-size: 0.72rem;">Order # {{ order.order_number }}</span>
+                                <div>
+                                    <a href="{% url 'orders:order_detail' order.order_number %}" class="fw-bold text-primary text-decoration-none me-2">Order Details</a>
+                                    | <a href="{% url 'orders:order_invoice' order.order_number %}" target="_blank" class="fw-bold text-secondary text-decoration-none ms-2">Invoice</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Card Body -->
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">
+                                    <span class="badge {{ order.badge_class }} me-2">{{ order.get_order_status_display }}</span>
+                                    {% if order.order_status == 'DELIVERED' %}
+                                        Package was delivered
+                                    {% elif order.order_status == 'CANCELLED' %}
+                                        Order has been cancelled
+                                    {% else %}
+                                        Arriving by {{ order.estimated_delivery|date:"l, d M"|default:"soon" }}
+                                    {% endif %}
+                                </h6>
+                            </div>
+                            <a href="{% url 'orders:order_detail' order.order_number %}" class="btn btn-warning btn-sm fw-bold">
+                                Track Package <i class="fa-solid fa-chevron-right ms-1"></i>
+                            </a>
+                        </div>
+
+                        <!-- Items in this Order -->
+                        <div class="d-flex flex-column gap-3">
+                            {% for item in order.items.all %}
+                                <div class="d-flex align-items-center justify-content-between py-2 border-top">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded p-1 bg-light border d-flex align-items-center justify-content-center" style="width: 65px; height: 65px;">
+                                            <img src="{{ item.product_image_url }}" alt="{{ item.product_title }}" style="max-height: 55px; max-width: 55px; object-fit: contain;">
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold small text-dark">{{ item.product_title }}</div>
+                                            <div class="text-muted small">Qty: {{ item.quantity }} | Unit Price: ₹{{ item.price|intcomma }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="fw-bold text-dark">₹{{ item.total_price|intcomma }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm p-5 text-center my-4">
+            <div class="mb-3">
+                <i class="fa-solid fa-box-open fs-1 text-muted"></i>
+            </div>
+            <h4 class="fw-bold text-dark">You haven't placed any orders yet</h4>
+            <p class="text-muted small">Start shopping on Buyzone to see your past orders here.</p>
+            <div class="mt-2">
+                <a href="{% url 'store:product_list' %}" class="btn btn-warning fw-bold px-4">Start Shopping</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
